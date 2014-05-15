@@ -7,8 +7,8 @@ previous_guesses = [] #Stores user's guesses to alert when re-use is attempted
 target = "_"*word.length  #Displays user's progress in guessing the word
 counter = 8 #Create and display a counter for guesses
 
-def add_guess(array, guess) #DRY's out adding old guesses to their array
-  array << guess
+def add_guess(array, guessed_letter) #DRY's out adding old guesses to their array
+  array << guessed_letter
 end
 
 def congrats(solution) #DRY's out congrats messages ...but something is wrong here
@@ -25,6 +25,14 @@ def prompt(target, counter) #DRY's out user input and progress prompt
 	puts "#{counter} tries remaining!\n" #decrementing counter
 end
 
+def letter_swapper(word, guess, target_displayed)
+  until !word.include?(guess)
+	position = word.index(guess)  #Index it, where in word is guess?
+	target_displayed[position] = guess #Replace that position of word with guess using [ ]
+	word[position] = "_" #Remove the letter from word for re-indexing
+  end 
+end
+
 until counter == 0 || !target.include?("_") #Loop until no more tries remaining or user has guessed word
 	prompt(target, counter)
 	guess = gets.chomp.upcase
@@ -33,11 +41,7 @@ until counter == 0 || !target.include?("_") #Loop until no more tries remaining 
 			puts "You've already guessed that letter!\n" #If yes, return to prompt
 		elsif word.include?(guess) #If not, does word include guess?
 			puts "Good guess!\n"
-			until !word.include?(guess)
-			  position = word.index(guess)  #Index it, where in word is guess?
-			  target[position] = guess #Replace that position of word with guess using [ ]
-			  word[position] = "_" #Remove the letter from word for re-indexing
-			end 
+			letter_swapper(word, guess, target)
 			add_guess(previous_guesses, guess) #ADD GUESS TO ALREADY GUESSED LETTERS
 		else
 		    puts "Sorry, try again!\n"
